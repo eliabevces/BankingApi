@@ -9,28 +9,48 @@ public class BankTransaction {
 
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
-    private int accountId;
+    private int id;
 
     @ManyToOne
-    @JoinColumn(name="accountId", nullable=false)
+    @JoinColumn(name="account_id", nullable=false)
     private Account sender;
 
     @ManyToOne
-    @JoinColumn(name="accountId", nullable=false)
+    @JoinColumn(name="account_id", nullable=false)
     private Account receiver;
 
     private LocalDate paymentDate;
 
+    private double value;
+
     public BankTransaction() {}
 
-    public BankTransaction(Account sender, Account receiver, LocalDate paymentDate) {
+    public BankTransaction(Account sender, Account receiver, LocalDate paymentDate, double value) {
         this.sender = sender;
         this.receiver = receiver;
         this.paymentDate = paymentDate;
+        this.value = value;
+    }
+
+    public void executeTransaction() throws Exception {
+        if(this.sender.getBalance() < this.value) {
+            throw new Exception("This account doesn't have that kind of money");
+        }
+        double senderBalance = this.sender.getBalance();
+        double receiverBalance = this.receiver.getBalance();
+
+        try {
+            this.sender.setBalance(senderBalance-value);
+            this.receiver.setBalance(receiverBalance+value);
+        }catch (Exception e){
+            this.sender.setBalance(senderBalance);
+            this.receiver.setBalance(receiverBalance);
+            throw e;
+        }
     }
 
     public int getAccountId() {
-        return accountId;
+        return id;
     }
 
     public Account getSender() {
@@ -46,7 +66,7 @@ public class BankTransaction {
     }
 
     public void setAccountId(int accountId) {
-        this.accountId = accountId;
+        this.id = accountId;
     }
 
     public void setSender(Account sender) {
@@ -60,4 +80,5 @@ public class BankTransaction {
     public void setPaymentDate(LocalDate paymentDate) {
         this.paymentDate = paymentDate;
     }
+
 }

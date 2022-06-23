@@ -8,7 +8,7 @@ public class Account {
 
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
-    private int accountId;
+    private int id;
 
     private String name;
 
@@ -33,7 +33,7 @@ public class Account {
     }
 
     public int getAccountId() {
-        return accountId;
+        return id;
     }
 
     public String getName() {
@@ -56,8 +56,8 @@ public class Account {
         return receive;
     }
 
-    public void setAccountId(int accountId) {
-        this.accountId = accountId;
+    public void setAccountId(int id) {
+        this.id = id;
     }
 
     public void setName(String name) {
