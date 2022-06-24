@@ -1,13 +1,16 @@
 package com.testemeutudo.bankingapi.controllers;
 
 import com.testemeutudo.bankingapi.models.Account;
-import com.testemeutudo.bankingapi.models.BankTransaction;
+
 import com.testemeutudo.bankingapi.repos.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Set;
+import java.util.List;
+
 
 @Controller
 @RequestMapping(path="/account")
@@ -17,34 +20,26 @@ public class AccountController {
 
 
     @PostMapping(path="/add")
-    public @ResponseBody String addNewAccount (@RequestParam String name
-            , @RequestParam int cpf, @RequestParam double balance, @RequestParam Set<BankTransaction> payments, @RequestParam Set<BankTransaction> receive) {
+    public @ResponseBody Account addNewAccount (@RequestParam String name
+            , @RequestParam String cpf, @RequestParam double balance) {
 
-        Account account = new Account();
-        account.setName(name);
-        account.setCpf(cpf);
-        account.setBalance(balance);
-        account.setPayments(payments);
-        account.setReceive(receive);
+        Account account = new Account(name,cpf,balance);
         accountRepository.save(account);
-        return "Saved";
+        return account;
     }
 
-    @GetMapping(path="/all")
-    public @ResponseBody Iterable<Account> getAllUsers() {
-        return accountRepository.findAll();
+    @GetMapping(path="/", produces = "application/json")
+    public @ResponseBody ResponseEntity<List<Account>> getAllUsers() {
+        return new ResponseEntity<>(
+                accountRepository.findAll(),
+                HttpStatus.OK);
     }
 
     @GetMapping(value="/balance/{id}")
-    public @ResponseBody String getBalance(@PathVariable("id") int accountid){
-        try {
-            Account a = accountRepository.getReferenceById(accountid);
-            return ("Balance = $" + a.getBalance());
-        }catch (Exception e){
-            return "Account not found";
-        }
+    public @ResponseBody ResponseEntity<Double> getBalance(@PathVariable("id") int accountid){
+        return new ResponseEntity<>(
+                accountRepository.getReferenceById(accountid).getBalance(),
+                HttpStatus.OK);
     }
-
-
 
 }

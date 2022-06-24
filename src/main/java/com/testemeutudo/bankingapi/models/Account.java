@@ -1,6 +1,9 @@
 package com.testemeutudo.bankingapi.models;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import javax.persistence.*;
+import java.util.Collections;
 import java.util.Set;
 
 @Entity
@@ -12,24 +15,26 @@ public class Account {
 
     private String name;
 
-    private int cpf;
+    private String cpf;
 
     private double balance;
 
     @OneToMany(mappedBy="sender")
+    @JsonManagedReference
     private Set<BankTransaction> payments;
 
     @OneToMany(mappedBy="receiver")
+    @JsonManagedReference
     private Set<BankTransaction> receive;
 
     public Account() {}
 
-    public Account(String name, int cpf, double balance, Set<BankTransaction> payments, Set<BankTransaction> receive) {
+    public Account(String name, String cpf, double balance) {
         this.name = name;
         this.cpf = cpf;
         this.balance = balance;
-        this.payments = payments;
-        this.receive = receive;
+        this.payments = Collections.emptySet();
+        this.receive = Collections.emptySet();
     }
 
     public int getAccountId() {
@@ -40,7 +45,7 @@ public class Account {
         return name;
     }
 
-    public int getCpf() {
+    public String getCpf() {
         return cpf;
     }
 
@@ -64,7 +69,7 @@ public class Account {
         this.name = name;
     }
 
-    public void setCpf(int cpf) {
+    public void setCpf(String cpf) {
         this.cpf = cpf;
     }
 

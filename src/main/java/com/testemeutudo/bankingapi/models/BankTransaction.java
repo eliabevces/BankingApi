@@ -1,22 +1,26 @@
 package com.testemeutudo.bankingapi.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.time.LocalDate;
 import javax.persistence.*;
 
 
 @Entity
+@JsonIgnoreProperties({"hibernateLazyInitializer"})
 public class BankTransaction {
 
     @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
+    @GeneratedValue
     private int id;
 
-    @ManyToOne
-    @JoinColumn(name="account_id", nullable=false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonBackReference
     private Account sender;
 
-    @ManyToOne
-    @JoinColumn(name="account_id", nullable=false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonBackReference
     private Account receiver;
 
     private LocalDate paymentDate;
@@ -49,8 +53,12 @@ public class BankTransaction {
         }
     }
 
-    public int getAccountId() {
+    public int getId() {
         return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public Account getSender() {
@@ -65,10 +73,6 @@ public class BankTransaction {
         return paymentDate;
     }
 
-    public void setAccountId(int accountId) {
-        this.id = accountId;
-    }
-
     public void setSender(Account sender) {
         this.sender = sender;
     }
@@ -81,4 +85,22 @@ public class BankTransaction {
         this.paymentDate = paymentDate;
     }
 
+    public double getValue() {
+        return value;
+    }
+
+    public void setValue(double value) {
+        this.value = value;
+    }
+
+    @Override
+    public String toString() {
+        return "{" +
+                "\"id\":" + "\"" +  id + "\"" +
+                ", \"sender\":" + sender.getAccountId() +
+                ", \"receiver\":" + receiver.getAccountId() +
+                ", \"paymentDate\":" + "\"" + paymentDate + "\"" +
+                ", \"value\":" + value +
+                '}';
+    }
 }
